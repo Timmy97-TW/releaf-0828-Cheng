@@ -659,3 +659,37 @@ img[width][height] { height: auto; }
 .closing__where dt { color: var(--leaf-200); }
 .closing__where dd { margin: 0; color: var(--white); }
 @media (max-width: 560px) { .closing__where { grid-template-columns: 1fr; gap: .1rem; } .closing__where dt { margin-top: var(--sp-3); font-size: var(--text-xs); } }
+
+/* -------------------------------------------------- prototype gallery ---- */
+/* Five versions side by side, each with the fields that were filled in at the
+   time. Photographs stay uncropped: two of the five are portrait. */
+.protos { display: grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: var(--sp-5) 0; }
+.proto { margin: 0; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); overflow: hidden; background: var(--white); display: flex; flex-direction: column; }
+.proto img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: 50% 45%; background: var(--gray-100); }
+.proto figcaption { padding: var(--sp-3) var(--sp-4) var(--sp-4); }
+.proto figcaption > b { display: block; font-family: var(--font-mono); font-size: 1.05rem; color: var(--leaf-700); margin-bottom: var(--sp-2); }
+.proto dl { display: grid; grid-template-columns: max-content 1fr; gap: .2rem var(--sp-3); margin: 0; font-size: var(--text-xs); line-height: 1.5; }
+.proto dt { color: var(--gray-400); }
+.proto dd { margin: 0; color: var(--gray-700); }
+/* the one version whose problems field came back empty */
+.proto--clean { border-color: var(--leaf-500); background: var(--leaf-50); }
+.proto--clean figcaption > b { color: var(--leaf-900); }
+
+/* ------------------------------------------- contamination question list -- */
+.cq { margin: var(--sp-5) 0; padding: 0; list-style: none; counter-reset: cq; }
+.cq li { position: relative; padding: 0 0 var(--sp-5) 3rem; border-bottom: 1px solid var(--gray-200); margin-bottom: var(--sp-5); }
+.cq li:last-child { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+.cq li::before {
+  counter-increment: cq; content: counter(cq);
+  position: absolute; left: 0; top: -.1rem;
+  width: 2rem; height: 2rem; border-radius: 50%;
+  background: var(--leaf-700); color: var(--white);
+  font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 700;
+  display: grid; place-items: center;
+}
+.cq b { display: block; font-size: var(--text-lede); line-height: 1.45; color: var(--leaf-900); margin-bottom: var(--sp-3); }
+.cq p { margin: 0; font-size: var(--text-sm); color: var(--gray-600); line-height: 1.7; }
+@media (max-width: 560px) { .cq li { padding-left: 2.5rem; } .cq li::before { width: 1.7rem; height: 1.7rem; font-size: var(--text-xs); } }
+/* one agenda item has nowhere on the page to point at, so it is not a link */
+.agenda__i--plain { cursor: default; }
+.agenda__i--plain:hover { background: var(--leaf-50); }
