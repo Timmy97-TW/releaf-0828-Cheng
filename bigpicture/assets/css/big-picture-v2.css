@@ -1,0 +1,647 @@
+/* Hallmark · component: homepage section (interactive figure + map plate)
+ * genre: editorial · macrostructure: 19 Map / Diagram (closing band)
+ * theme: releaf-wiki project system (assets/css/tokens.css, preserved verbatim)
+ * states: default · hover · focus-visible · lit · rel · held · reduced-motion
+ * motion primitives: 2 (one entrance, one highlight) · contrast: pass
+ * pre-emit critique: P5 H5 E5 S5 R5 V4
+ *
+ * Two carry-overs the slop test flags and the pre-flight rule preserves anyway:
+ * the display face is Inter, and pure white is the paper. Both are locked by
+ * the wiki's own tokens.css, which this file copies rather than forks. The
+ * tokens file already notes that swapping the family is an edit to two
+ * variables; when the wiki makes that call, this section follows it unchanged.
+ *
+ * =============================================================================
+ * ReLeaf: the big picture, V2
+ * -----------------------------------------------------------------------------
+ * V1 drew eight concrete steps on two horizontal lines. This is the same
+ * material told as a story a judge can follow with one finger, down a vertical
+ * trunk, with the work that feeds each step converging on it horizontally from
+ * both sides:
+ *
+ *   THE STRESS  ->  THE PROTEIN  ->  THE CELLS  ->  THE REACTOR  ->  THE FIELD
+ *
+ * Every step is a thing you can point at, not a stage of a process, so a piece
+ * of work hangs off whichever step it serves. No step numbers: the ramp on the
+ * left edge of each card and the chevrons between them carry the direction, and
+ * a numbered list would say "process diagram" when this is meant to say
+ * "here is the thing". Under it, one week on one plot, then the map, which is
+ * where the argument stops being about a machine and starts being about ground.
+ *
+ * A PIECE OF WORK IS ITS OWN PHOTOGRAPH. The tile is the picture, with the name
+ * under it. That is the whole card: no pill, no icon, no subtitle. Fifteen
+ * photographs of the actual days, plus the one tile that moves, which is our
+ * own MD run. They sit held back until pointed at.
+ *
+ * TWO COLOUR SYSTEMS, AND THEY DO NOT OVERLAP. V1 had a third, a zone colour
+ * saying which subteam owned a card, and it needed a key to be read. The key
+ * was cut, so the code went with it rather than sitting on the page unexplained.
+ *
+ *   1  THE RAMP says direction. The five accent bars walk light to dark down
+ *      the trunk. With the numbers gone it is the only cue that says which way
+ *      to read it.
+ *   2  AMBER, AND ONLY AMBER, marks a cross-link. It never means anything else.
+ *
+ * The icons and the trajectory are coloured by what the object actually is, and
+ * are drawn from our own CAD renders and the system schematic.
+ *
+ * RULES THAT SHOULD SURVIVE THE NEXT EDIT
+ *
+ * · NOTHING OPENS. No modal, no drawer, no click-through. Every word is in the
+ *   markup before the script runs. Pointing changes emphasis, nothing else.
+ * · A LIMIT SITS IN THE SAME SENTENCE AS THE CLAIM IT LIMITS, at the same size.
+ *   No small print anywhere on this page.
+ * · A SLOT IS A DESIGNED ELEMENT, not an omission. Where a number is not on
+ *   record the page says so and says what would fill it.
+ * · READABLE WITH NO JAVASCRIPT AND NO MOTION. The hidden entrance state is
+ *   added by script, never by the stylesheet.
+ * · THE TRUNK IS VERTICAL, so nothing is ever wider than the column and there
+ *   is no drag gesture to explain.
+ * ========================================================================== */
+
+:root {
+  /* ── the icon palette ──────────────────────────────────────────────────
+     Carried over from V1 unchanged so one sprite serves both pages. Every
+     value is a wiki token or an interpolation between two of them; the mid
+     tones exist because tokens.css carries only a 700 and a 100 per signal
+     colour and flat colour art needs a middle. */
+  --i-k:  var(--black);
+  --i-p:  var(--white);
+  --i-n:  var(--gray-400);
+  --i-g9: var(--leaf-900);
+  --i-g7: var(--leaf-700);
+  --i-g5: var(--leaf-500);
+  --i-g2: var(--leaf-200);
+  --i-lt: #35e08a;                 /* the 520 nm the reactor runs on */
+  --i-a7: var(--amber-700);
+  --i-a5: #d9a13c;                 /* interpolated: amber 700 to 100 */
+  --i-a2: #f2ddb0;
+  --i-a1: var(--amber-100);
+  --i-r7: var(--rust-700);
+  --i-r3: #edc0ae;                 /* interpolated: rust 700 to 100 */
+  --i-r1: var(--rust-100);
+  --i-s7: var(--slate-700);
+  --i-s2: #c3d4e2;                 /* interpolated: slate 700 to 100 */
+  --i-s1: var(--slate-100);
+
+  /* Tints the wiki has no token for, and the map's own class colours. The map
+     layers were rendered to these exact values, so the legend swatches and the
+     raster must read from the same tokens or they drift apart on the next edit. */
+  --leaf-300:  #b6d5c3;
+  --leaf-250:  #cfe0d6;
+  --leaf-400:  #a9c9b8;
+  --leaf-mid:  #9cc4ac;
+
+  --vol-1: #eceadf;   /* climate volatility index, 0.38 to 0.49 */
+  --vol-2: #ddd8c2;   /* 0.49 to 0.60 */
+  --vol-3: #cbbf98;   /* 0.60 to 0.71 */
+  --vol-4: #c2984e;   /* 0.71 to 0.82 */
+  --vol-5: #9a3d22;   /* 0.82 to 0.93 */
+  --parcel-small: var(--leaf-900);   /* farm parcels under two hectares */
+  --parcel-large: var(--slate-700);  /* and over */
+
+  --hairline: rgb(0 0 0 / .16);
+  --ink:      #070b09;   /* the outro wash only; home.css already defines it */
+  --lift:     0 1px 2px rgb(0 0 0 / .07);
+
+  /* the ramp. Five stops, light to dark, down the trunk. */
+  --rung-1: #6aab86;
+  --rung-2: var(--leaf-500);
+  --rung-3: #3d8560;
+  --rung-4: var(--leaf-700);
+  --rung-5: var(--leaf-900);
+
+  --trunk:   436px;   /* the middle column: the five step cards */
+  --wingmax: 356px;   /* two tiles wide, so the trunk stays dead centre */
+  --chainmax: 1208px; /* the figure is a drawing, not a page width */
+  --tile-w:  130px;   /* per-step defaults; each step overrides both below */
+  --tile-h:  80px;
+  --v2-ease: cubic-bezier(.16, 1, .3, 1);
+  --v2-dur:  210ms;
+}
+
+/* ── the frame ─────────────────────────────────────────────────────────── */
+
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+section.bpv2 { padding-top: var(--sp-6); padding-bottom: 0; }
+h2.band__title { overflow-wrap: anywhere; min-width: 0; }
+.bpv2 h2.band__title { margin-bottom: var(--sp-4); max-width: none; }
+
+.bpv2__kicker {
+  margin: 0 0 var(--sp-1);
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--leaf-700);
+}
+.bpv2__lede {
+  margin: 0 0 var(--sp-7); max-width: 58ch;
+  font-size: var(--text-lede); line-height: 1.55; color: var(--gray-700);
+}
+.bpv2__lede b { color: var(--black); font-weight: 600; }
+
+/* ── the trunk ─────────────────────────────────────────────────────────── */
+
+.chain { position: relative; max-width: var(--chainmax); margin: 0 auto; padding: 0; list-style: none; }
+
+.node,
+.link {
+  display: grid;
+  grid-template-columns: minmax(0, var(--wingmax)) minmax(0, var(--trunk)) minmax(0, var(--wingmax));
+  column-gap: var(--sp-5);
+  justify-content: center;
+  align-items: center;
+}
+
+/* the segment between two nodes. It belongs to the gap, not to either node,
+   which is why it carries its own data-flow rather than a data-lit. */
+.link { height: 18px; }
+.link__rail {
+  grid-column: 2; justify-self: center; position: relative;
+  width: 2px; height: 100%; background: var(--leaf-200);
+  transition: background-color var(--v2-dur) var(--v2-ease);
+}
+.link__rail::after {
+  content: ""; position: absolute; left: 50%; bottom: -1px; margin-left: -5px;
+  border-left: 5px solid transparent; border-right: 5px solid transparent;
+  border-top: 7px solid var(--leaf-200);
+  transition: border-top-color var(--v2-dur) var(--v2-ease);
+}
+.link[data-flow] .link__rail { background: var(--leaf-500); }
+.link[data-flow] .link__rail::after { border-top-color: var(--leaf-500); }
+.link--tail { height: var(--sp-7); }
+.link--tail .link__rail { background: var(--leaf-200); }
+.link--tail .link__rail::after { display: none; }
+
+/* ── a node ────────────────────────────────────────────────────────────── */
+
+.node__core {
+  grid-column: 2; position: relative;
+  display: grid; grid-template-columns: auto 1fr; column-gap: var(--sp-4);
+  align-items: center;
+  padding: var(--sp-3) var(--sp-5) var(--sp-3) var(--sp-4);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-left: 3px solid var(--rung, var(--leaf-500));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  cursor: default;
+  transition: border-color var(--v2-dur) var(--v2-ease),
+              box-shadow   var(--v2-dur) var(--v2-ease),
+              background-color var(--v2-dur) var(--v2-ease);
+}
+.node:nth-child(1)  .node__core { --rung: var(--rung-1); }
+.node:nth-child(3)  .node__core { --rung: var(--rung-2); }
+.node:nth-child(5)  .node__core { --rung: var(--rung-3); }
+.node:nth-child(7)  .node__core { --rung: var(--rung-4); }
+.node:nth-child(9)  .node__core { --rung: var(--rung-5); }
+
+.node__name {
+  display: block; margin: 0 0 2px;
+  font-family: var(--font-display); font-size: var(--text-h3); font-weight: 650;
+  line-height: 1.2; letter-spacing: -.015em; color: var(--leaf-900);
+}
+/* The limit is the second sentence, and it is set at the same size as the claim
+   it limits. Nothing on this page is ever small print. */
+.node__note { display: block; font-size: var(--text-sm); line-height: 1.5; color: var(--gray-600); }
+
+.node[data-lit] > .node__core > .well { background: var(--leaf-100); }
+.node[data-lit] .node__core {
+  border-color: var(--leaf-500); border-left-color: var(--rung, var(--leaf-700));
+  box-shadow: var(--shadow-md);
+}
+
+/* ── the strips: work converging on a step, horizontally ───────────────
+   A piece of work IS its photograph. The tile is the picture with the name
+   under it, and that is the entire card. No pill, no icon, no subtitle. They
+   run outward from the trunk in a row rather than stacking, so a step and
+   everything that feeds it occupy one line of the page and the whole chain
+   fits a laptop screen without scrolling. */
+
+.strip { display: flex; align-items: flex-end; column-gap: 10px; }
+.strip--l { grid-column: 1; justify-content: flex-end; }
+.strip--r { grid-column: 3; justify-content: flex-start; }
+
+/* Each step sets its own tile format, and the format is the step's signature.
+   A plot, a person kneeling and an island are all upright, so THE STRESS runs
+   portrait. A trajectory and a page of working are wide, so THE PROTEIN does.
+   Plates and gels are square, benches are landscape, a field is a horizon.
+
+   Inside a step, ONE PHOTOGRAPH LEADS. It is the one with people in it wherever
+   there is a choice, it is larger than the rest, and it is not always on the
+   same side. That is what turns a row of evidence into somewhere for the eye to
+   land first, and it is why the strips are not a grid. */
+.node[data-node="1"] { --tile-w:  92px; --tile-h: 112px; }
+.node[data-node="2"] { --tile-w: 112px; --tile-h:  70px; }
+.node[data-node="3"] { --tile-w:  92px; --tile-h:  84px; }
+.node[data-node="4"] { --tile-w:  92px; --tile-h:  62px; }
+.node[data-node="5"] { --tile-w:  92px; --tile-h:  54px; }
+.node[data-node="1"] .task[data-lead] { --tile-w: 116px; --tile-h: 140px; }
+.node[data-node="2"] .task[data-lead] { --tile-w: 140px; --tile-h:  86px; }
+.node[data-node="3"] .task[data-lead] { --tile-w: 116px; --tile-h: 106px; }
+.node[data-node="4"] .task[data-lead] { --tile-w: 116px; --tile-h:  78px; }
+.node[data-node="5"] .task[data-lead] { --tile-w: 116px; --tile-h:  68px; }
+
+.task {
+  position: relative; flex: none; width: var(--tile-w);
+  cursor: default;
+  transition: opacity var(--v2-dur) var(--v2-ease);
+}
+
+/* A print, not a thumbnail: a white mat, a hairline, a soft drop, and a degree
+   or so of tilt so the row reads as laid out by hand rather than filled into a
+   grid. The tilt is a static transform, not motion, and it never changes. */
+.task__shot {
+  margin: 0; padding: 5px; background: var(--white);
+  border: 1px solid var(--gray-200); border-radius: 3px;
+  box-shadow: 0 1px 2px rgb(23 23 23 / .06), 0 6px 14px -8px rgb(23 23 23 / .3);
+  transition: border-color var(--v2-dur) var(--v2-ease), box-shadow var(--v2-dur) var(--v2-ease);
+}
+.strip .task:nth-child(1) .task__shot { transform: rotate(-1.1deg); }
+.strip .task:nth-child(2) .task__shot { transform: rotate(.8deg); }
+.strip .task:nth-child(3) .task__shot { transform: rotate(-.6deg); }
+.strip--r .task:nth-child(1) .task__shot { transform: rotate(1deg); }
+.strip--r .task:nth-child(2) .task__shot { transform: rotate(-.7deg); }
+.strip--r .task:nth-child(3) .task__shot { transform: rotate(.9deg); }
+
+.task__shot img,
+.task__shot .mdanim {
+  display: block; width: 100%; height: var(--tile-h);
+  background: var(--gray-100);
+  transition: filter var(--v2-dur) var(--v2-ease), opacity var(--v2-dur) var(--v2-ease);
+}
+.task__shot img { object-fit: cover; filter: saturate(.9); opacity: .94; }
+.task__shot .mdanim { background: var(--leaf-50); opacity: 1; }
+
+/* The mark. A photograph at this size tells you the mood of a day and not much
+   else; the glyph tells you what the thing IS before you read the name. It sits
+   on the caption line beside the name, never over the picture. A badge floating
+   on the frame was tried and it fussed up every photograph it landed on. */
+.task__mark {
+  flex: none; display: grid; place-items: center;
+  width: 16px; height: 16px; margin-top: 1px;
+  opacity: .74;
+  transition: opacity var(--v2-dur) var(--v2-ease);
+}
+.task__mark .ico { width: 16px; height: 16px; }
+.task[data-lit] .task__mark,
+.task[data-rel] .task__mark { opacity: 1; }
+
+/* One line, always, so every row of the chain is exactly as tall as every other
+   and the tiles sit on a single grid rather than a ragged one. Labels are terse
+   for the same reason: under a photograph, "Photometer" reads faster than "The
+   photometer" and leaves the sentence-making to the step card. */
+.task__label {
+  display: flex; align-items: flex-start; column-gap: 5px;
+  margin-top: 7px; min-width: 0; min-height: 2.44em;
+}
+.task__name {
+  min-width: 0; padding-bottom: 2px;
+  font-size: 12.5px; line-height: 1.22; color: var(--gray-600);
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  overflow: hidden; overflow-wrap: anywhere;
+  border-bottom: 1.5px solid transparent;
+  transition: color var(--v2-dur) var(--v2-ease), border-color var(--v2-dur) var(--v2-ease);
+}
+
+/* the connector: a hairline from the inner tile into the step it feeds. Only
+   the tile nearest the trunk carries one, so a row of four does not draw four
+   parallel lines into the same card. */
+.strip--l .task:last-child::after,
+.strip--r .task:first-child::after {
+  content: ""; position: absolute; top: calc(var(--tile-h) / 2 + 6px); width: var(--sp-5); height: 1px;
+  background: var(--gray-300);
+  transition: background-color var(--v2-dur) var(--v2-ease);
+}
+.strip--l .task:last-child::after  { left: calc(100% + 2px); }
+.strip--r .task:first-child::after { right: calc(100% + 2px); }
+
+.task[data-lit] .task__shot img,
+.task[data-lit] .task__shot .mdanim { filter: none; opacity: 1; }
+.task[data-lit] .task__shot {
+  border-color: var(--leaf-700);
+  box-shadow: 0 1px 2px rgb(23 23 23 / .08), 0 10px 20px -8px rgb(20 64 43 / .38);
+}
+.task[data-rel] .task__shot { border-color: var(--amber-700); }
+.task[data-lit] .task__name { color: var(--black); border-bottom-color: var(--leaf-700); }
+
+/* The connector belongs to the strip rather than to one tile, so pointing at
+   the outermost piece of work still draws a line into the step it feeds. */
+.strip--l:has(.task[data-lit]) .task:last-child::after,
+.strip--r:has(.task[data-lit]) .task:first-child::after { background: var(--leaf-700); }
+
+/* the quiet half: the pieces this one talks to elsewhere */
+.task[data-rel] .task__shot img { opacity: 1; }
+.task[data-rel] .task__name { color: var(--amber-700); border-bottom-color: var(--amber-700); }
+
+/* ── the icon wells ────────────────────────────────────────────────────── */
+
+.well {
+  display: inline-grid; place-items: center; flex: none;
+  background: var(--zone, var(--leaf-100));
+  border-radius: 999px;
+}
+.node__core > .well { width: 48px; height: 48px; border-radius: var(--radius); background: var(--leaf-50); }
+.ico { display: block; }
+.node__core > .well .ico { width: 30px; height: 30px; }
+
+/* ── focus ─────────────────────────────────────────────────────────────── */
+
+.node__core:focus-visible,
+.task:focus-visible,
+.dial__input:focus-visible {
+  outline: 2px solid var(--leaf-700);
+  outline-offset: 3px;
+  transition: none;                /* focus rings are never transitioned */
+}
+
+/* =============================================================================
+   WHERE IT WOULD LAND.  Macrostructure 19 · Map / Diagram.
+   -----------------------------------------------------------------------------
+   One spatial composition on tinted paper. The island sits on the trunk's own
+   axis, directly under the last step, so the line that ran down the five steps
+   carries on into the map and the two halves read as one drawing rather than a
+   figure with an appendix. The legend beside it is the control and answers to
+   pointing the same way the steps do.
+
+   The dial moves a SHARE, and the map answers: the parcels wash from pale to
+   green as the share rises. It is a proportion painted over the whole layer,
+   not a list of farms, and the note under the dial says so. Nothing here
+   invents a count.
+   ========================================================================== */
+
+section.reach {
+  padding-top: 0;
+  background: var(--white);
+  border-top: 1px solid var(--gray-200);
+}
+.reach__kicker {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--leaf-700);
+}
+.reach h2.band__title { margin-bottom: var(--sp-4); max-width: 16ch; }
+.reach__lede {
+  margin: 0; font-size: var(--text-lede); line-height: 1.5; color: var(--gray-700);
+}
+.reach__lede b { color: var(--leaf-900); font-weight: 650; }
+
+/* Three columns, and the middle one is the trunk continued. The map is the same
+   width as a step card and sits on the same centre line, so the eye runs
+   straight from THE FIELD into the island. */
+.plate {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, var(--map-w)) minmax(0, 1fr);
+  column-gap: var(--sp-6);
+  align-items: start;
+  --map-w: 360px;
+}
+.plate__say { grid-column: 1; padding-top: calc(var(--sp-7) + var(--sp-5)); }
+.plate__fig { grid-column: 2; margin: 0; }
+.plate__read { grid-column: 3; }
+
+/* the trunk, carried across the band edge and into the island */
+.plate__stem {
+  display: block; width: 2px; height: var(--sp-7); margin: 0 auto var(--sp-3);
+  background: var(--leaf-200);
+}
+
+/* ── the atlas ──────────────────────────────────────────────────────────
+   Ten layers stacked in one box. The base carries the whole map; the rest sit
+   above a scrim and come up only while a legend row is held, so holding a band
+   reads as that band with the small farms left in place rather than as a
+   different picture. The parcel layers sit above the band layers because the
+   bands are cut out where a parcel was drawn over them; keeping the parcels on
+   top fills those gaps exactly. */
+.atlas { position: relative; width: 100%; aspect-ratio: 800 / 1267; }
+.atlas__l { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.atlas__base { position: relative; }
+.atlas__l[data-layer] { opacity: 0; transition: opacity var(--v2-dur) var(--v2-ease); }
+.atlas__band { transition: opacity var(--v2-dur) var(--v2-ease); }
+.atlas__scrim {
+  position: absolute; inset: 0; background: var(--white);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--v2-dur) var(--v2-ease);
+}
+
+/* The roll-out. Every parcel is drawn pale; the five band layers on top are the
+   same parcels split by the volatility of the ground they sit on, and they come
+   up worst band first as the dial rises. Somebody deploying would start where
+   the weather is hardest, so that is the order the map fills in. */
+.atlas__l[data-layer="smalldim"] { opacity: 1; }
+.atlas__band { opacity: 0; }
+.atlas__band[data-band="5"] { opacity: var(--b5, 0); }
+.atlas__band[data-band="4"] { opacity: var(--b4, 0); }
+.atlas__band[data-band="3"] { opacity: var(--b3, 0); }
+.atlas__band[data-band="2"] { opacity: var(--b2, 0); }
+.atlas__band[data-band="1"] { opacity: var(--b1, 0); }
+
+/* holding a legend row */
+.atlas[data-hold] .atlas__scrim { opacity: .78; }
+.atlas[data-hold] .atlas__l[data-layer="edge"] { opacity: .5; }
+.atlas[data-hold] .atlas__l[data-layer="smalldim"] { opacity: 0; }
+.atlas[data-hold="v1"] .atlas__l[data-layer="v1"],
+.atlas[data-hold="v2"] .atlas__l[data-layer="v2"],
+.atlas[data-hold="v3"] .atlas__l[data-layer="v3"],
+.atlas[data-hold="v4"] .atlas__l[data-layer="v4"],
+.atlas[data-hold="v5"] .atlas__l[data-layer="v5"] { opacity: 1; }
+.atlas[data-hold^="v"] .atlas__band,
+.atlas[data-hold="small"] .atlas__band { opacity: 1; }
+.atlas[data-hold="large"] .atlas__l[data-layer="large"] { opacity: 1; }
+.atlas[data-hold="large"] .atlas__band { opacity: 0; }
+
+
+/* ── the legend, which is the control ───────────────────────────────── */
+
+.key { margin: 0 0 var(--sp-2); padding: 0; list-style: none; }
+.key__grp {
+  margin-top: var(--sp-4); padding-bottom: var(--sp-1);
+  border-bottom: 1px solid var(--gray-200);
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--gray-600);
+}
+.key__grp:first-child { margin-top: 0; }
+.key__row {
+  display: grid; grid-template-columns: 14px minmax(0, 1fr);
+  align-items: baseline; column-gap: var(--sp-3);
+  padding: var(--sp-1) 0; cursor: default;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--v2-dur) var(--v2-ease), opacity var(--v2-dur) var(--v2-ease);
+}
+.key__sw {
+  width: 14px; height: 14px; align-self: center; border-radius: 2px;
+  background: var(--sw); border: 1px solid var(--hairline);
+}
+.key__row b {
+  font-size: var(--text-sm); font-weight: 600; color: var(--black);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.key__row[data-lit] { border-bottom-color: var(--leaf-700); }
+.key[data-focus] .key__row:not([data-lit]) { opacity: .44; }
+.key__row:focus-visible { outline: 2px solid var(--leaf-700); outline-offset: 3px; transition: none; }
+.key__hint { margin: var(--sp-3) 0 var(--sp-6); font-size: var(--text-sm); color: var(--gray-600); }
+
+/* ── the dial ───────────────────────────────────────────────────────────
+   A hundred hairlines, and the first N inked. No count is implied and none is
+   needed: the rule IS the percentage, drawn. */
+
+.dial { padding-top: var(--sp-6); border-top: 1px solid var(--gray-200); }
+.dial__lab {
+  display: block; margin-bottom: var(--sp-3);
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--gray-600);
+}
+.dial__row { display: flex; align-items: center; column-gap: var(--sp-5); }
+.dial__val {
+  flex: none;
+  font-family: var(--font-display); font-size: var(--text-h1); font-weight: 700;
+  line-height: 1; letter-spacing: -.03em; color: var(--leaf-900);
+  font-variant-numeric: tabular-nums;
+}
+.dial__val i { font-style: normal; font-size: .44em; font-weight: 600; color: var(--leaf-700); }
+.dial__input {
+  flex: 1 1 auto; min-width: 0; margin: 0;
+  accent-color: var(--leaf-700); background: transparent; cursor: pointer;
+}
+.dial__rule { display: flex; column-gap: 1px; height: 30px; margin: var(--sp-4) 0 var(--sp-4); }
+.dial__rule i {
+  flex: 1 1 0; min-width: 0; background: var(--leaf-250);
+  transition: background-color var(--v2-dur) var(--v2-ease);
+}
+.dial__rule i[data-on] { background: var(--leaf-700); }
+.dial__rule i:nth-child(10n+1) { background: var(--leaf-400); }
+.dial__rule i[data-on]:nth-child(10n+1) { background: var(--leaf-900); }
+.dial__read { margin: 0; max-width: 40ch; font-size: var(--text-base); line-height: 1.55; color: var(--black); }
+
+/* =============================================================================
+   THE OUTRO.
+   -----------------------------------------------------------------------------
+   One landscape band the full width of the viewport, then one line and a
+   signature under it. The photograph is feathered top and bottom into the paper
+   rather than cut, so the band above needs no seam and the picture reads as
+   part of the page instead of a block dropped on the end.
+
+   The ground stays light. The sign-off is the hand-drawn wordmark and its
+   letters are filled black; on ink they disappear.
+   ========================================================================== */
+
+section.outro { padding: 0 0 var(--sp-8); background: var(--white); }
+
+.outro__frame {
+  margin: 0 0 var(--sp-7);
+  width: 100%; aspect-ratio: 1900 / 1267; max-height: 72vh;
+}
+.outro__shot { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+
+.outro__inner {
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  justify-content: space-between; column-gap: var(--sp-7); row-gap: var(--sp-5);
+}
+.outro__line {
+  margin: 0; max-width: 22ch; min-width: 0; overflow-wrap: normal;
+  font-family: var(--font-display);
+  font-size: clamp(2.125rem, 1rem + 3.4vw, 4rem); font-weight: 700;
+  line-height: 1.02; letter-spacing: -.034em; color: var(--leaf-900);
+}
+.outro__mark { display: block; width: 216px; height: auto; margin-bottom: 4px; }
+
+/* =============================================================================
+   DIMMING. One highlight primitive: while something is pointed at, everything
+   not in its run steps back. Opacity only, nothing moves and nothing scales.
+   ========================================================================== */
+
+.spine[data-focus] .node:not([data-lit]) .node__core,
+.spine[data-focus] .task:not([data-lit]):not([data-rel]) { opacity: .52; }
+.node__core { transition: opacity var(--v2-dur) var(--v2-ease); }
+
+/* =============================================================================
+   ENTRANCE. One shot, added by script so the page is complete without it.
+   ========================================================================== */
+
+.will-rise .node__core,
+.will-rise .task { opacity: 0; transform: translateY(8px); }
+.will-rise.in .node__core,
+.will-rise.in .task {
+  opacity: 1; transform: none;
+  transition: opacity 420ms var(--v2-ease), transform 420ms var(--v2-ease);
+}
+.will-rise.in .node:nth-child(3)  .node__core, .will-rise.in .node:nth-child(3)  .task { transition-delay: 60ms; }
+.will-rise.in .node:nth-child(5)  .node__core, .will-rise.in .node:nth-child(5)  .task { transition-delay: 120ms; }
+.will-rise.in .node:nth-child(7)  .node__core, .will-rise.in .node:nth-child(7)  .task { transition-delay: 180ms; }
+.will-rise.in .node:nth-child(9)  .node__core, .will-rise.in .node:nth-child(9)  .task { transition-delay: 240ms; }
+/* the tiles in a row arrive one after another, outward from the trunk */
+.will-rise.in .strip--l .task:nth-last-child(2),
+.will-rise.in .strip--r .task:nth-child(2) { transition-delay: 90ms; }
+.will-rise.in .strip--l .task:nth-last-child(3),
+.will-rise.in .strip--r .task:nth-child(3) { transition-delay: 130ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+  .will-rise .node__core, .will-rise .task { opacity: 1; transform: none; }
+}
+
+/* =============================================================================
+   NARROW. Below 900px the trunk moves to the left edge and the wings stack
+   underneath their node. Same markup, no second copy of the content, and no
+   drag gesture anywhere: the drawing was never wider than the column.
+   ========================================================================== */
+
+@media (max-width: 1240px) {
+  :root { --trunk: 380px; --wingmax: 330px; }
+  .node[data-node="1"] { --tile-w:  84px; --tile-h: 102px; }
+  .node[data-node="2"] { --tile-w: 104px; --tile-h:  64px; }
+  .node[data-node="3"] { --tile-w:  84px; --tile-h:  76px; }
+  .node[data-node="4"] { --tile-w:  84px; --tile-h:  56px; }
+  .node[data-node="5"] { --tile-w:  84px; --tile-h:  50px; }
+  .node[data-node="1"] .task[data-lead] { --tile-w: 106px; --tile-h: 128px; }
+  .node[data-node="2"] .task[data-lead] { --tile-w: 128px; --tile-h:  78px; }
+  .node[data-node="3"] .task[data-lead] { --tile-w: 106px; --tile-h:  96px; }
+  .node[data-node="4"] .task[data-lead] { --tile-w: 106px; --tile-h:  70px; }
+  .node[data-node="5"] .task[data-lead] { --tile-w: 106px; --tile-h:  62px; }
+}
+
+/* Below 900px the trunk moves to the left edge and each step's work wraps
+   underneath it, step first. Same markup, no second copy of the content, and
+   no drag gesture anywhere: the drawing was never wider than the column. */
+@media (max-width: 900px) {
+  .node, .link { grid-template-columns: 1fr; }
+  .node {
+    row-gap: var(--sp-3);
+    padding-left: var(--sp-5);
+    border-left: 2px solid var(--leaf-200);
+  }
+  .node__core, .strip--l, .strip--r { grid-column: 1; }
+  .node__core { order: -1; margin-left: calc(var(--sp-5) * -1 - 2px); }
+  .link { height: 22px; padding-left: var(--sp-5); border-left: 2px solid var(--leaf-200); }
+  .link__rail { display: none; }
+  .strip { flex-wrap: wrap; row-gap: var(--sp-3); }
+  .strip--l, .strip--r { justify-content: flex-start; }
+  .strip--l .task:last-child::after,
+  .strip--r .task:first-child::after { display: none; }
+  .plate { grid-template-columns: 1fr; row-gap: var(--sp-6); }
+  .plate__say, .plate__fig, .plate__read { grid-column: 1; }
+  .plate__say { padding-top: 0; }
+  .plate__stem { display: none; }
+  .plate__fig { max-width: 320px; }
+  .outro__frame { aspect-ratio: 4 / 3; max-height: none; margin-bottom: var(--sp-6); }
+  .outro__inner { flex-direction: column; align-items: flex-start; }
+  .outro__mark { width: 168px; }
+}
+
+@media (max-width: 560px) {
+  .node__core { grid-template-columns: 1fr; row-gap: var(--sp-2); }
+  /* Stacked, the rows no longer have to share a height, so a long name wraps
+     rather than being clipped. */
+  .task__name { white-space: normal; overflow: visible; overflow-wrap: anywhere; }
+  .task__label { align-items: flex-start; }
+  .task__mark { margin-top: 1px; }
+  .node[data-node="1"] { --tile-w: 118px; --tile-h: 138px; }
+  .node[data-node="2"] { --tile-w: 146px; --tile-h:  90px; }
+  .node[data-node="3"] { --tile-w: 126px; --tile-h: 114px; }
+  .node[data-node="4"] { --tile-w: 138px; --tile-h:  90px; }
+  .node[data-node="5"] { --tile-w: 146px; --tile-h:  76px; }
+}
+
+@media print {
+  .reach { background: var(--white); }
+  .atlas__scrim, .atlas__l[data-layer] { display: none; }
+}

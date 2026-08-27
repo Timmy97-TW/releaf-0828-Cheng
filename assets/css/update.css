@@ -570,30 +570,23 @@ dl.spec dd { margin: 0; font-family: var(--font-mono); font-size: .9em; color: v
 @media (max-width: 640px) { .cmp__row { grid-template-columns: 1fr; } .cmp__row > div:first-child { border-right: 0; border-bottom: 1px solid var(--gray-200); } }
 
 /* ------------------------------------------------------------ gallery ---- */
+/* One photograph a month, shown whole. Nothing here crops: the frames were
+   composed by the people in them and a 3:2 mask would cut somebody out. */
 .gal { margin: var(--sp-6) 0 0; }
-.gal__month { margin: var(--sp-7) 0 0; }
+.gal__month { margin: var(--sp-8) 0 0; }
 .gal__month:first-child { margin-top: var(--sp-5); }
-.gal__bar { display: flex; align-items: baseline; gap: var(--sp-4); padding-bottom: var(--sp-3); border-bottom: 2px solid var(--leaf-500); margin-bottom: var(--sp-4); flex-wrap: wrap; }
+.gal__bar { display: flex; align-items: baseline; gap: var(--sp-4); padding-bottom: var(--sp-3); border-bottom: 2px solid var(--leaf-500); margin-bottom: var(--sp-5); flex-wrap: wrap; }
 .gal__m { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; color: var(--leaf-700); letter-spacing: -.02em; }
 .gal__l { font-size: var(--text-sm); color: var(--gray-600); line-height: 1.55; flex: 1 1 16rem; }
-.gal__grid { display: grid; gap: var(--sp-3); grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); }
-.gal__grid figure { margin: 0; }
-.gal__grid img {
-  width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius-sm);
-  background: var(--gray-100); cursor: zoom-in;
+.gal__one { margin: 0; }
+.gal__one img {
+  width: auto; max-width: 100%; max-height: 78vh; height: auto;
+  margin: 0 auto; display: block;
+  border-radius: var(--radius-sm); background: var(--gray-100); cursor: zoom-in;
   transition: opacity .12s ease;
 }
-.gal__grid img:hover { opacity: .88; }
-.gal__grid figcaption { margin-top: .45rem; font-size: var(--text-xs); color: var(--gray-500); line-height: 1.55; }
-.gal__grid .wide { grid-column: span 2; }
-/* a double-width tile keeps the row height of its neighbours, so it crops wider
-   rather than taller and the grid stays on one baseline */
-.gal__grid .wide img { aspect-ratio: 3 / 1; }
-@media (max-width: 560px) {
-  .gal__grid .wide { grid-column: span 1; }
-  .gal__grid .wide img { aspect-ratio: 3 / 2; }
-}
-.gal__grid .tall img { aspect-ratio: 3 / 4; }
+.gal__one img:hover { opacity: .9; }
+.gal__one figcaption { margin: var(--sp-3) auto 0; max-width: 62ch; font-size: var(--text-xs); color: var(--gray-500); line-height: 1.6; }
 
 /* --------------------------------------------------------- seed panel ---- */
 .seed { display: grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); margin: var(--sp-5) 0; }
@@ -630,3 +623,39 @@ dl.spec dd { margin: 0; font-family: var(--font-mono); font-size: .9em; color: v
    display:contents keeps it out of the layout, which matters for the hero, where
    the img sizes itself against .hero2__img rather than against the wrapper. */
 picture { display: contents; }
+
+/* Every <img> carries width/height so nothing jumps while the page loads. Those
+   attributes also pin a real pixel height, which beats aspect-ratio and any
+   max-height we set, so hand the box back to CSS everywhere except the hero,
+   where the image genuinely has to fill its container. */
+img[width][height] { height: auto; }
+.hero2__img img[width][height] { height: 100%; }
+
+/* the opening tiles are eight landscape frames in four rows of two, on one
+   crop so the grid reads as a set rather than eight different shapes */
+.spread__grid img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.spread figcaption { margin-top: .5rem; }
+/* these two object-positions were aimed at the old four-tile set */
+.spread figure:nth-child(3) img, .spread figure:nth-child(4) img { object-position: 50% 50%; }
+
+/* ------------------------------------------------ the closing big picture -- */
+/* The spine inside needs more room than the 78ch reading column, so this
+   section sits outside the page grid as its own band, the way the opening
+   photographs do. */
+.bigband { max-width: none; padding: var(--sp-8) 0; border-top: 1px solid var(--gray-200); background: var(--gray-50); }
+.bigband__inner { max-width: 1180px; margin: 0 auto; padding: 0 var(--sp-5); }
+@media (min-width: 640px) { .bigband__inner { padding: 0 var(--sp-6); } }
+.bigband .lede { max-width: 68ch; }
+.bigpic { margin: var(--sp-6) 0 0; border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; background: var(--white); }
+.bigpic iframe { display: block; width: 100%; border: 0; }
+.bigpic__fallback { padding: var(--sp-5); font-size: var(--text-sm); color: var(--gray-600); }
+
+.closing { margin: var(--sp-7) 0 0; padding: var(--sp-6); background: var(--leaf-900); color: var(--white); border-radius: var(--radius); }
+/* .closing p below is one step more specific, so the slogan has to match it */
+.closing p.closing__slogan { margin: 0; font-family: var(--font-display); font-size: var(--text-h2); font-weight: 700; line-height: 1.15; letter-spacing: -.02em; color: var(--white); }
+.closing p { margin: var(--sp-4) 0 0; color: var(--leaf-200); font-size: var(--text-sm); line-height: 1.7; }
+.closing b { color: var(--white); }
+.closing__where { display: grid; grid-template-columns: max-content 1fr; gap: .45rem var(--sp-5); margin: var(--sp-6) 0 0; padding-top: var(--sp-5); border-top: 1px solid rgb(255 255 255 / .18); font-size: var(--text-sm); }
+.closing__where dt { color: var(--leaf-200); }
+.closing__where dd { margin: 0; color: var(--white); }
+@media (max-width: 560px) { .closing__where { grid-template-columns: 1fr; gap: .1rem; } .closing__where dt { margin-top: var(--sp-3); font-size: var(--text-xs); } }

@@ -27,10 +27,13 @@
   var body = document.querySelector('.pagebody');
   var list = document.querySelector('.toc__list');
   if (body && list) {
-    var heads = body.querySelectorAll('section.sec > h2');
+    /* the closing band sits outside .pagebody but still belongs in the rail */
+    var heads = document.querySelectorAll('.pagebody section.sec > h2, section.bigband > .bigband__inner > h2');
     heads.forEach(function (h) {
-      var sec = h.parentElement;
-      if (!sec.id) return;
+      /* the closing band wraps its heading in an inner div, so walk up to the
+         section rather than assuming the heading's parent carries the id */
+      var sec = h.closest('section');
+      if (!sec || !sec.id) return;
       var li = document.createElement('li');
       var a = document.createElement('a');
       a.href = '#' + sec.id;
@@ -55,7 +58,37 @@
         });
       });
     }, { rootMargin: '-20% 0px -70% 0px' });
-    body.querySelectorAll('section.sec').forEach(function (s) { if (s.id) obs.observe(s); });
+    document.querySelectorAll('.pagebody section.sec, section.bigband').forEach(function (s) { if (s.id) obs.observe(s); });
+  }
+
+  /* ------------------------------------------------- big-picture iframe */
+  /* Same origin, so the parent can read the real height and keep the frame as
+     tall as its content: no scrollbar inside a scrollbar. The content reflows
+     hard between phone and desktop widths and its own images load late, so
+     watch the body rather than measuring once.                               */
+  var bp = document.querySelector('.bigpic iframe');
+  if (bp) {
+    var fit = function () {
+      try {
+        var d = bp.contentDocument;
+        if (d && d.documentElement) bp.style.height = d.documentElement.scrollHeight + 'px';
+      } catch (e) {}
+    };
+    var watch = function () {
+      fit();
+      try {
+        var d = bp.contentDocument;
+        if (d && d.body && window.ResizeObserver) new ResizeObserver(fit).observe(d.body);
+        if (d) d.querySelectorAll('img').forEach(function (i) {
+          if (!i.complete) i.addEventListener('load', fit, { once: true });
+        });
+      } catch (e) {}
+      [200, 800, 2000].forEach(function (ms) { setTimeout(fit, ms); });
+    };
+    bp.addEventListener('load', watch);
+    if (bp.contentDocument && bp.contentDocument.readyState === 'complete') watch();
+    window.addEventListener('resize', fit);
+    window.addEventListener('orientationchange', fit);
   }
 
   /* ------------------------------------------------------------ lightbox */

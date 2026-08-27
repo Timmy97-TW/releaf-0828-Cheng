@@ -28,6 +28,7 @@ tools/figures.py              圖的產生器。數字改這裡，重跑就好
 tools/import-photo.sh         把原始照片轉成網頁用的尺寸
 tools/build-webp.sh           每張 jpg 旁邊產生一份 webp
 tools/build-font.sh           重新子集化字體
+bigpicture/                   big picture V2 的完整拷貝，第 11 節用 iframe 內嵌
 ```
 
 ## 效能
@@ -65,8 +66,6 @@ python3 -m http.server 8811
 
 ## 寄出前
 
-- [ ] 開場照片裡拿盤子的是誰，確認後改 caption
-- [ ] 明天實際要帶哪兩套水耕盤，填進 6.4
-- [ ] 去的學生與指導老師人數，填進第 7 節
+- [ ] 明天把兩套水耕的照片拍起來，補進 6.4
 - [ ] 決定要不要拿掉 `<meta name="robots" content="noindex">`
 - [ ] 拿掉頁首那條黃色草稿橫幅（`<p class="draft">`）
