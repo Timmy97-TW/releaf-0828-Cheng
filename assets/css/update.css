@@ -616,11 +616,7 @@ dl.spec dd { margin: 0; font-family: var(--font-mono); font-size: .9em; color: v
 .t td.q { font-weight: 600; color: var(--leaf-900); }
 .mini { font-size: var(--text-xs); color: var(--gray-500); line-height: 1.6; margin-top: var(--sp-2); }
 
-/* The 0327 frame puts the plate and the person holding it left of centre, so the
-   hero crop moves left of the inherited 52% to keep them out from behind the text. */
-.hero2__img img { object-position: 20% 50%; }
-@media (max-width: 900px) {
-  /* full-bleed on small screens crops much harder, so the same subject needs a
-     different anchor to stay in frame */
-  .hero2__img img { object-position: 32% 42%; }
-}
+/* The 0327 frame has her pointing at the board a little left of centre, with the
+   students to her right. 35% lands that group clear of the text panel, and it
+   holds on the small-screen full-bleed crop too. */
+.hero2__img img { object-position: 35% 40%; }
