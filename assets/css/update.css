@@ -581,7 +581,9 @@ dl.spec dd { margin: 0; font-family: var(--font-mono); font-size: .9em; color: v
 .gal__grid img {
   width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--radius-sm);
   background: var(--gray-100); cursor: zoom-in;
+  transition: opacity .12s ease;
 }
+.gal__grid img:hover { opacity: .88; }
 .gal__grid figcaption { margin-top: .45rem; font-size: var(--text-xs); color: var(--gray-500); line-height: 1.55; }
 .gal__grid .wide { grid-column: span 2; }
 /* a double-width tile keeps the row height of its neighbours, so it crops wider
@@ -620,3 +622,11 @@ dl.spec dd { margin: 0; font-family: var(--font-mono); font-size: .9em; color: v
    students to her right. 35% lands that group clear of the text panel, and it
    holds on the small-screen full-bleed crop too. */
 .hero2__img img { object-position: 35% 40%; }
+
+/* the opening tiles open in the lightbox too, so say so on hover */
+.spread img { cursor: zoom-in; }
+
+/* <picture> wraps every photograph so WebP can be offered with a JPEG fallback.
+   display:contents keeps it out of the layout, which matters for the hero, where
+   the img sizes itself against .hero2__img rather than against the wrapper. */
+picture { display: contents; }

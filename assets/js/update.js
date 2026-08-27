@@ -63,12 +63,19 @@
   if (lb) {
     var lbImg = lb.querySelector('img'), lbCap = lb.querySelector('figcaption');
     document.addEventListener('click', function (e) {
-      var img = e.target.closest('.fig img');
+      var img = e.target.closest('.fig img, .gal__grid img, .spread img');
       if (img) {
         lbImg.src = img.currentSrc || img.src;
         lbImg.alt = img.alt;
+        /* a caption holds both languages; show only the one currently on */
         var cap = img.closest('figure').querySelector('figcaption');
-        lbCap.textContent = cap ? cap.textContent.trim() : '';
+        if (cap) {
+          var lang = root.getAttribute('data-lang') || 'zh';
+          var span = cap.querySelector('.' + lang);
+          lbCap.textContent = (span ? span.textContent : cap.textContent).trim();
+        } else {
+          lbCap.textContent = '';
+        }
         lb.classList.add('is-open');
         return;
       }

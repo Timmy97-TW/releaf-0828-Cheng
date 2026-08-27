@@ -14,12 +14,16 @@
    a full 繁體中文 face is 10 to 20 MB unsubset.
    ========================================================================== */
 
+/* Subset to Latin plus the handful of symbols this page uses, and compressed to
+   WOFF2: 856 KB of TrueType becomes 80 KB, with the 100-900 weight axis intact.
+   Chinese is not in here and never was; it falls through to the system face.
+   Regenerate with tools/build-font.sh after editing copy that adds new glyphs. */
 @font-face {
   font-family: "Inter";
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("../fonts/inter-variable.ttf") format("truetype");
+  src: url("../fonts/inter-latin.woff2") format("woff2");
 }
 
 :root {
