@@ -66,6 +66,7 @@ python3 -m http.server 8811
 
 ## 寄出前
 
-- [ ] 明天把兩套水耕的照片拍起來，補進 6.4
-- [ ] 決定要不要拿掉 `<meta name="robots" content="noindex">`
+- [ ] 明天把兩套水耕的照片拍起來，補進 6.5
 - [ ] 拿掉頁首那條黃色草稿橫幅（`<p class="draft">`）
+
+`noindex` 已經拿掉，這頁現在搜尋引擎收得到。

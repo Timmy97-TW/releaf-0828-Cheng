@@ -5,13 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ReLeaf · 給鄭梅君老師的進度回報 · 2026-08-27</title>
 <meta name="description" content="GEMS Taiwan ReLeaf 自 2026-03-27 拜訪鄭梅君老師後的植物實驗進度：八組 agar 鹽逆境、七盤土耕、六個水耕原型，以及 8/28 想請教的問題。" />
-<meta name="robots" content="noindex" />
 <link rel="icon" href="assets/img/logo.png" />
 <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="preload" as="image" imagesrcset="assets/img/0327-hydro-lesson.webp" type="image/webp" fetchpriority="high" />
-<link rel="stylesheet" href="assets/css/tokens.css?v=1787831211" />
-<link rel="stylesheet" href="assets/css/page.css?v=1787831211" />
-<link rel="stylesheet" href="assets/css/update.css?v=1787831211" />
+<link rel="stylesheet" href="assets/css/tokens.css?v=1787832099" />
+<link rel="stylesheet" href="assets/css/page.css?v=1787832099" />
+<link rel="stylesheet" href="assets/css/update.css?v=1787832099" />
 </head>
 <body>
 
@@ -26,22 +25,20 @@
 </div>
 
 <p class="draft"><b>草稿</b>
-  <span class="zh">寄出前要處理三件事：明天帶去的那兩套要拍照補進 6.4。然後決定要不要拿掉 noindex。</span>
-  <span class="en">Three things to settle before sending: photograph the two setups and drop them into 6.4. Then decide whether to drop noindex.</span>
+  <span class="zh">還差一件：明天帶去的那兩套要拍照，補進 <a href="#handover">6.5</a>。</span>
+  <span class="en">One thing left: photograph the two setups tomorrow and drop them into <a href="#handover">6.5</a>.</span>
 </p>
 
 <header class="hero2" id="top">
   <div class="hero2__img" aria-hidden="true"><picture><source srcset="assets/img/0327-hydro-lesson.webp" type="image/webp" /><img src="assets/img/0327-hydro-lesson.jpg" alt="" fetchpriority="high" width="1500" height="1125" /></picture></div>
   <div class="hero2__inner">
+    <!-- the visible headline was dropped; the document still needs one h1, and
+         the page is indexable now, so it stays for structure only -->
+    <h1 class="visually-hidden">ReLeaf · 給鄭梅君老師的進度回報 · 2026-08-27</h1>
     <p class="hero2__eyebrow">
       <span class="zh">進度回報　2026 年 8 月 27 日　距 3/27 拜訪 153 天</span>
       <span class="en">Progress update &middot; 27 August 2026 &middot; 153 days since 27 March</span>
     </p>
-
-    <h1 class="hero2__claim">
-      <span class="zh">您說先 agar，<br />再進土。</span>
-      <span class="en">You said agar first,<br />then soil.</span>
-    </h1>
 
     <div class="hero2__ask">
       <p class="zh"><b>鄭老師您好，謝謝您 3 月 27 日讓我們去實驗室。</b>那時候我們題目都還沒定，您還是花了一個下午，
@@ -54,22 +51,30 @@
       <p class="intent__title en">Six things this page is here to do before tomorrow afternoon</p>
       <ol class="intent">
         <li><a href="#ledger"><span class="zh">回報您 3/27 提的每一件事，現在走到哪裡</span><span class="en">Report back on every item you raised on 27 March</span></a></li>
-        <li><a href="#changed"><span class="zh">說明我們的設計在這半年變了什麼</span><span class="en">Say what changed in our design over these five months</span></a></li>
         <li><a href="#agar"><span class="zh">分享 agar 八個實驗組的數據</span><span class="en">Share the data from eight agar experiment sets</span></a></li>
         <li><a href="#soil"><span class="zh">分享土耕，包含我們把逆境時機做錯的地方</span><span class="en">Share the soil work, including where we got the stress timing wrong</span></a></li>
-        <li><a href="#hydro"><span class="zh">分享重新設計的水耕盤，明天想留兩套給您</span><span class="en">Share the redesigned hydroponic plate, and leave two setups with you</span></a></li>
-        <li><a href="#questions"><span class="zh">請教您九個問題</span><span class="en">Ask you nine questions</span></a></li>
+        <li><a href="#hydro"><span class="zh">分享水耕的五個原型，明天想留兩套給您</span><span class="en">Share the five hydroponic prototypes, and leave two setups with you</span></a></li>
+        <li><a href="#contam"><span class="zh"><b>請教您水耕的污染</b>，這是我們現在最卡的一件</span><span class="en"><b>Ask you about the contamination</b>, which is what we are most stuck on</span></a></li>
+        <li><a href="#questions"><span class="zh">另外還有三個問題</span><span class="en">And three other questions</span></a></li>
       </ol>
     </div>
 
     <div class="hero2__why">
-      <p class="zh">用 bioprotectant 幫作物撐過逆境，現在很多人在做，但它的生產、儲存、運輸都很貴，
-      貴到真正需要的人買不起。我們想試的是不要運，讓需要的人在現場自己做。要證明這行得通，
-      得先有一套自己信得過的植物逆境模型。</p>
-      <p class="en">Bioprotectants are getting serious attention as a way to carry crops through stress, and they are
-      expensive to make, store and ship. Expensive enough that the people who need them cannot buy them. What we want
-      to try is not shipping them at all, and letting whoever needs one produce it where it is used. To show that works
-      we first need a plant stress model we trust.</p>
+      <p class="zh"><b>作物遇到逆境的時候需要保護劑。難的不是做出保護劑，是在對的時間、給對的量。</b>
+      現在要做到這件事，不是蓋一座很貴的廠，就是要有人一直盯著，小農兩個都做不到。</p>
+      <p class="zh">ReLeaf 想做的是一台自己會判斷的小工廠。我們改造枯草桿菌（<i>Bacillus subtilis</i>），
+      把環境感測直接接到菌的生產開關上：土壤和天氣說作物快撐不住了，菌才開始做保護劑，做好之後分泌出來，
+      透過一層膜送到根那一側；不需要的時候就不做。產出跟著需求走，所以它不是把保護劑運到田裡，是把工廠放在田裡。</p>
+      <p class="zh">要證明這件事行得通，得先有一套自己信得過的植物逆境模型。</p>
+      <p class="en"><b>A crop under stress needs a protectant. The hard part is not making one, it is getting the
+      right amount out at the right moment.</b> Doing that today takes either expensive infrastructure or somebody
+      watching all the time, and a smallholder has neither.</p>
+      <p class="en">ReLeaf is a small factory that decides for itself. We engineer <i>Bacillus subtilis</i> and wire
+      environmental sensing straight to the cell&rsquo;s production switch: when the soil and the forecast say the crop
+      is about to struggle, the bacteria make the protectant and secrete it, and it crosses a membrane to the root side.
+      When nothing is needed, nothing is made. Output tracks need, so this does not ship a protectant to the field, it
+      puts the factory in the field.</p>
+      <p class="en">To show that works we first need a plant stress model we trust.</p>
     </div>
 
     <p class="hero2__caption">
@@ -1319,6 +1324,6 @@
   <figcaption></figcaption>
 </div>
 
-<script src="assets/js/update.js?v=1787831211"></script>
+<script src="assets/js/update.js?v=1787832099"></script>
 </body>
 </html>
