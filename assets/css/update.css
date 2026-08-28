@@ -309,7 +309,7 @@ dl.spec dd { margin: 0; font-family: var(--font-mono); font-size: .9em; color: v
 /* ================================================= FIGURE HEIGHT CAP ====== */
 /* Photographs are evidence, not scenery: cap them so a long page stays
    scannable. Diagrams get more room and are never cropped.                  */
-.fig img { max-height: 380px; object-fit: cover; width: 100%; }
+.fig img { width: 100%; height: auto; max-height: none; object-fit: contain; }
 .fig--wide img { max-height: 560px; object-fit: contain; background: var(--gray-50); }
 
 /* ============================================ COLLAPSIBLE INSTRUMENTS ===== */
@@ -597,7 +597,7 @@ dl.spec dd { margin: 0; font-family: var(--font-mono); font-size: .9em; color: v
 /* ----------------------------------------------------------- handover ---- */
 .hand { display: grid; gap: var(--sp-5); grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); margin: var(--sp-5) 0; }
 .hand__c { border: 1px solid var(--leaf-200); border-radius: var(--radius); overflow: hidden; background: var(--leaf-50); }
-.hand__c img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.hand__c img { width: 100%; height: auto; aspect-ratio: auto; object-fit: contain; }
 .hand__b { padding: var(--sp-4); }
 .hand__n { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--leaf-500); font-weight: 700; letter-spacing: .08em; }
 .hand__h { margin: .3rem 0 var(--sp-3); font-size: var(--text-h3); color: var(--leaf-900); font-weight: 700; line-height: 1.25; }
@@ -633,12 +633,11 @@ img[width][height] { height: auto; }
 .topbar__mark[width][height] { height: 20px; }
 @media (max-width: 620px) { .topbar__mark[width][height] { height: 18px; } }
 
-/* the opening tiles are eight landscape frames in four rows of two, on one
-   crop so the grid reads as a set rather than eight different shapes */
-.spread__grid img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+/* Photographs are shown at their own proportions, never cropped to a grid.
+   The tiles line up on their top edge instead of on a shared height. */
+.spread__grid { align-items: start; }
+.spread__grid img { width: 100%; height: auto; aspect-ratio: auto; object-fit: contain; }
 .spread figcaption { margin-top: .5rem; }
-/* these two object-positions were aimed at the old four-tile set */
-.spread figure:nth-child(3) img, .spread figure:nth-child(4) img { object-position: 50% 50%; }
 
 /* ------------------------------------------------ the closing big picture -- */
 /* The spine inside needs more room than the 78ch reading column, so this
@@ -665,9 +664,9 @@ img[width][height] { height: auto; }
 /* -------------------------------------------------- prototype gallery ---- */
 /* Five versions side by side, each with the fields that were filled in at the
    time. Photographs stay uncropped: two of the five are portrait. */
-.protos { display: grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: var(--sp-5) 0; }
+.protos { display: grid; gap: var(--sp-4); grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); margin: var(--sp-5) 0; align-items: start; }
 .proto { margin: 0; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); overflow: hidden; background: var(--white); display: flex; flex-direction: column; }
-.proto img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; object-position: 50% 45%; background: var(--gray-100); }
+.proto img { width: 100%; height: auto; aspect-ratio: auto; object-fit: contain; background: var(--gray-100); }
 .proto figcaption { padding: var(--sp-3) var(--sp-4) var(--sp-4); }
 .proto figcaption > b { display: block; font-family: var(--font-mono); font-size: 1.05rem; color: var(--leaf-700); margin-bottom: var(--sp-2); }
 .proto dl { display: grid; grid-template-columns: max-content 1fr; gap: .2rem var(--sp-3); margin: 0; font-size: var(--text-xs); line-height: 1.5; }
@@ -711,3 +710,44 @@ img[width][height] { height: auto; }
   display: grid; place-items: center;
 }
 .qsub b { display: block; color: var(--leaf-900); font-size: var(--text-base); margin-bottom: .2rem; }
+
+/* ------------------------------------------------------- lightbox zoom ---- */
+/* Opening an image fits it to the screen. Clicking it again, or using the
+   buttons, magnifies about the point clicked and lets the image be dragged. */
+.lightbox img { transform-origin: 0 0; will-change: transform; cursor: zoom-in; max-width: none; max-height: none; border-radius: 0; }
+.lightbox.is-zoomed img { cursor: grab; }
+.lightbox.is-zoomed img.is-dragging { cursor: grabbing; }
+.lightbox__stage {
+  position: absolute; inset: 0; overflow: hidden;
+}
+/* the transform does all the placing, so the image starts at the stage origin
+   rather than being centred by the layout and then moved again */
+.lightbox__stage img { position: absolute; top: 0; left: 0; display: block; }
+.lightbox__tools {
+  position: absolute; left: 50%; bottom: max(1rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: .25rem;
+  padding: .3rem; border-radius: 999px;
+  background: rgb(0 0 0 / .55); backdrop-filter: blur(6px);
+  z-index: 2;
+}
+.lightbox__tools button {
+  appearance: none; border: 0; background: transparent; color: var(--white);
+  width: 2.2rem; height: 2.2rem; border-radius: 999px; cursor: pointer;
+  font: inherit; font-size: 1.05rem; line-height: 1;
+  display: grid; place-items: center;
+}
+.lightbox__tools button:hover { background: rgb(255 255 255 / .18); }
+.lightbox__tools output {
+  min-width: 3.4rem; text-align: center; color: var(--white);
+  font-family: var(--font-mono); font-size: var(--text-xs);
+}
+.lightbox figcaption { position: absolute; left: 0; right: 0; bottom: 4.2rem; margin: 0 auto; padding: 0 var(--sp-5); z-index: 1; text-align: center; }
+/* the base rule pads and grid-centres the overlay; the stage needs the whole
+   viewport so its own coordinates match what the zoom maths assumes */
+.lightbox { padding: 0; }
+.lightbox.is-open { display: block; }
+/* the last two crops: half-width figures keep their proportions too. The hero
+   background is the one image that still fills its frame, by design. */
+.fig--half img { max-height: none; object-fit: contain; height: auto; }
+.two { align-items: start; }

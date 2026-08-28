@@ -92,30 +92,104 @@
   }
 
   /* ------------------------------------------------------------ lightbox */
+  /* Opening fits the photograph to the screen. From there it is a magnifier:
+     click, wheel, pinch or the buttons zoom about the point being looked at,
+     and past 1x the image can be dragged.                                    */
   var lb = document.getElementById('lightbox');
   if (lb) {
-    var lbImg = lb.querySelector('img'), lbCap = lb.querySelector('figcaption');
+    var stage = lb.querySelector('.lightbox__stage');
+    var lbImg = lb.querySelector('img');
+    var lbCap = lb.querySelector('figcaption');
+    var out   = lb.querySelector('output');
+    var fit = 1, scale = 1, tx = 0, ty = 0, dragging = false, sx = 0, sy = 0;
+
+    function apply() {
+      lbImg.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+      lb.classList.toggle('is-zoomed', scale > fit * 1.02);
+      if (out) out.textContent = Math.round(scale / fit * 100) + '%';
+    }
+    function fitToStage() {
+      var r = stage.getBoundingClientRect();
+      var nw = lbImg.naturalWidth || 1, nh = lbImg.naturalHeight || 1;
+      fit = Math.min((r.width - 48) / nw, (r.height - 140) / nh);
+      if (!isFinite(fit) || fit <= 0) fit = 1;
+      scale = fit;
+      tx = (r.width - nw * scale) / 2;
+      ty = (r.height - nh * scale) / 2;
+      apply();
+    }
+    /* zoom about a point so the pixel under the cursor stays put */
+    function zoomAt(next, px, py) {
+      next = Math.max(fit, Math.min(fit * 8, next));
+      var r = stage.getBoundingClientRect();
+      var cx = (px - r.left - tx) / scale, cy = (py - r.top - ty) / scale;
+      tx += cx * (scale - next);
+      ty += cy * (scale - next);
+      scale = next;
+      if (scale <= fit * 1.02) { fitToStage(); return; }
+      apply();
+    }
+    function open(img) {
+      var pic = img.closest('picture');
+      var src = img.currentSrc || img.src;
+      if (pic) { var s = pic.querySelector('source'); if (s && img.currentSrc) src = img.currentSrc; }
+      lbImg.src = src;
+      lbImg.alt = img.alt || '';
+      var fg = img.closest('figure');
+      var cap = fg && fg.querySelector('figcaption');
+      if (cap) {
+        var lang = root.getAttribute('data-lang') || 'zh';
+        var span = cap.querySelector('.' + lang);
+        lbCap.textContent = (span ? span.textContent : cap.textContent).trim();
+      } else { lbCap.textContent = ''; }
+      lb.classList.add('is-open');
+      if (lbImg.complete && lbImg.naturalWidth) fitToStage();
+      else lbImg.addEventListener('load', fitToStage, { once: true });
+    }
+    function close() { lb.classList.remove('is-open', 'is-zoomed'); lbImg.src = ''; }
+
     document.addEventListener('click', function (e) {
-      var img = e.target.closest('.fig img, .gal__grid img, .spread img');
-      if (img) {
-        lbImg.src = img.currentSrc || img.src;
-        lbImg.alt = img.alt;
-        /* a caption holds both languages; show only the one currently on */
-        var cap = img.closest('figure').querySelector('figcaption');
-        if (cap) {
-          var lang = root.getAttribute('data-lang') || 'zh';
-          var span = cap.querySelector('.' + lang);
-          lbCap.textContent = (span ? span.textContent : cap.textContent).trim();
-        } else {
-          lbCap.textContent = '';
-        }
-        lb.classList.add('is-open');
+      var t = e.target.closest('.fig img, .gal__grid img, .gal__one img, .spread img, .proto img, .hand__c img');
+      if (t) { open(t); return; }
+      var btn = e.target.closest('.lightbox__tools button');
+      if (btn) {
+        var r = stage.getBoundingClientRect(), mx = r.left + r.width / 2, my = r.top + r.height / 2;
+        var k = btn.dataset.zoom;
+        if (k === 'in')  zoomAt(scale * 1.5, mx, my);
+        if (k === 'out') zoomAt(scale / 1.5, mx, my);
+        if (k === 'reset') fitToStage();
         return;
       }
-      if (e.target.closest('.lightbox')) lb.classList.remove('is-open');
+      if (e.target === lbImg) { zoomAt(scale > fit * 1.02 ? fit : fit * 2.5, e.clientX, e.clientY); return; }
+      if (e.target.closest('.lightbox')) close();
     });
+
+    lb.addEventListener('wheel', function (e) {
+      if (!lb.classList.contains('is-open')) return;
+      e.preventDefault();
+      zoomAt(scale * (e.deltaY < 0 ? 1.12 : 1 / 1.12), e.clientX, e.clientY);
+    }, { passive: false });
+
+    lbImg.addEventListener('pointerdown', function (e) {
+      if (scale <= fit * 1.02) return;
+      dragging = true; sx = e.clientX - tx; sy = e.clientY - ty;
+      lbImg.classList.add('is-dragging'); lbImg.setPointerCapture(e.pointerId);
+    });
+    lbImg.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      tx = e.clientX - sx; ty = e.clientY - sy; apply();
+    });
+    ['pointerup', 'pointercancel'].forEach(function (ev) {
+      lbImg.addEventListener(ev, function () { dragging = false; lbImg.classList.remove('is-dragging'); });
+    });
+
+    window.addEventListener('resize', function () { if (lb.classList.contains('is-open')) fitToStage(); });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') lb.classList.remove('is-open');
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape') close();
+      if (e.key === '+' || e.key === '=') { var r = stage.getBoundingClientRect(); zoomAt(scale * 1.5, r.left + r.width / 2, r.top + r.height / 2); }
+      if (e.key === '-') { var r2 = stage.getBoundingClientRect(); zoomAt(scale / 1.5, r2.left + r2.width / 2, r2.top + r2.height / 2); }
+      if (e.key === '0') fitToStage();
     });
   }
 })();
