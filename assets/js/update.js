@@ -106,6 +106,22 @@
     window.addEventListener('resize', fit);
     window.addEventListener('orientationchange', fit);
     window.addEventListener('load', function () { watch(); setTimeout(fit, 1200); });
+
+    /* The load event and the observer both depend on when the lazy frame decides
+       to fetch, which varies. Scrolling is the one thing that always happens
+       before a reader reaches this band, so settle the height there too, once
+       per frame and only until the measurement stops changing.               */
+    var settled = 0, pending = false;
+    window.addEventListener('scroll', function () {
+      if (pending || settled > 6) return;
+      pending = true;
+      requestAnimationFrame(function () {
+        pending = false;
+        var was = bp.style.height;
+        fit();
+        if (bp.style.height === was && was) settled++; else settled = 0;
+      });
+    }, { passive: true });
   }
 
   /* ------------------------------------------------------------ lightbox */

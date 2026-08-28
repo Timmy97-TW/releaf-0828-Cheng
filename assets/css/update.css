@@ -755,3 +755,11 @@ img[width][height] { height: auto; }
 /* the frame ends on the photograph, so the closing panel butts straight up to it */
 .bigpic { margin-bottom: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
 .closing { margin-top: 0; border-top-left-radius: 0; border-top-right-radius: 0; }
+
+/* ------------------------------------------- appendix and sign-off bands --- */
+/* The appendix moved out of the reading column so it can follow the big
+   picture, which needs the full width. It keeps a plain white ground; the
+   sign-off panel gets its own band so it stays the last thing on the page. */
+.bigband--plain { background: var(--white); border-top: 0; padding-top: var(--sp-7); }
+.bigband--plain .bigband__inner { max-width: 78ch; }
+
