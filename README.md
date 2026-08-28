@@ -64,9 +64,6 @@ python3 tools/figures.py
 python3 -m http.server 8811
 ```
 
-## 寄出前
+## 狀態
 
-- [ ] 明天把兩套水耕的照片拍起來，補進 6.5
-- [ ] 拿掉頁首那條黃色草稿橫幅（`<p class="draft">`）
-
-`noindex` 已經拿掉，這頁現在搜尋引擎收得到。
+2026-08-28 寄出。草稿橫幅、待填、`noindex` 都已拿掉。
