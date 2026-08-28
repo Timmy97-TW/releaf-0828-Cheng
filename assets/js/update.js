@@ -71,7 +71,10 @@
     var fit = function () {
       try {
         var d = bp.contentDocument;
-        if (d && d.documentElement) bp.style.height = d.documentElement.scrollHeight + 'px';
+        /* measure the body, not documentElement: the html element stretches to
+           whatever height we last set on the frame, so reading it would just
+           feed our own number back and the frame could never shrink. */
+        if (d && d.body) bp.style.height = Math.ceil(d.body.getBoundingClientRect().height) + 'px';
       } catch (e) {}
     };
     var watch = function () {
@@ -147,6 +150,16 @@
       else lbImg.addEventListener('load', fitToStage, { once: true });
     }
     function close() { lb.classList.remove('is-open', 'is-zoomed'); lbImg.src = ''; }
+
+    /* the big-picture band is a same-origin iframe; its tiles borrow this
+       lightbox rather than shipping a second one */
+    window.__releafZoom = function (src, caption) {
+      lbImg.src = src; lbImg.alt = caption || '';
+      lbCap.textContent = caption || '';
+      lb.classList.add('is-open');
+      if (lbImg.complete && lbImg.naturalWidth) fitToStage();
+      else lbImg.addEventListener('load', fitToStage, { once: true });
+    };
 
     document.addEventListener('click', function (e) {
       var t = e.target.closest('.fig img, .gal__grid img, .gal__one img, .spread img, .proto img, .hand__c img');

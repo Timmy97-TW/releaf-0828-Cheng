@@ -547,7 +547,7 @@
             </div>
             <div class="task" id="t-shield" tabindex="0" data-at="3" data-with="t-harvest t-law">
               <figure class="task__shot"><img src="assets/img/shield.jpg" width="340" height="260"
-                   loading="lazy" decoding="async" alt="The bioreactor running, the hollow fibre module and its tubing beside the culture bottle." /></figure>
+                   loading="lazy" decoding="async" alt="The whole reactor set up on a bench: the hollow fibre module upright on the stand, culture bottles, pump, and the live growth curve on the laptop." /></figure>
               <span class="task__label"><span class="task__mark"><svg class="ico" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-shield"/></svg></span><span class="task__name">Membrane</span></span>
             </div>
           </div>
@@ -769,5 +769,23 @@
 
 
 <script src="assets/js/big-picture-v2.js"></script>
+<script>
+/* Embedded in the 0828 page: a tile click opens the host page's magnifier, so
+   these photographs zoom like every other photograph on that page. Standalone,
+   there is no host and the tiles stay inert. */
+(function () {
+  var host = null;
+  try { host = window.parent !== window && window.parent.__releafZoom ? window.parent : null; } catch (e) { host = null; }
+  if (!host) return;
+  document.addEventListener('click', function (e) {
+    var img = e.target.closest('.task__shot img, .outro__shot');
+    if (!img) return;
+    e.preventDefault();
+    var abs = new URL(img.getAttribute('src'), location.href).href;
+    host.__releafZoom(abs, img.alt || '');
+  });
+  document.querySelectorAll('.task__shot img, .outro__shot').forEach(function (i) { i.style.cursor = 'zoom-in'; });
+})();
+</script>
 </body>
 </html>

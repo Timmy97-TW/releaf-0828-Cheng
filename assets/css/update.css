@@ -751,3 +751,7 @@ img[width][height] { height: auto; }
    background is the one image that still fills its frame, by design. */
 .fig--half img { max-height: none; object-fit: contain; height: auto; }
 .two { align-items: start; }
+
+/* the frame ends on the photograph, so the closing panel butts straight up to it */
+.bigpic { margin-bottom: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.closing { margin-top: 0; border-top-left-radius: 0; border-top-right-radius: 0; }
