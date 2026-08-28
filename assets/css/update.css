@@ -695,3 +695,19 @@ img[width][height] { height: auto; }
 /* one agenda item has nowhere on the page to point at, so it is not a link */
 .agenda__i--plain { cursor: default; }
 .agenda__i--plain:hover { background: var(--leaf-50); }
+
+/* ------------------------------------------------ sub-list inside a qcard -- */
+/* Q1 is one question with three candidate causes; they are the answer options,
+   not three separate questions, so they nest rather than getting their own cards. */
+.qsub { margin: var(--sp-4) 0; padding: 0; list-style: none; counter-reset: qsub; }
+.qsub li { position: relative; padding-left: 2.1rem; margin-bottom: var(--sp-4); font-size: var(--text-sm); color: var(--gray-600); line-height: 1.7; }
+.qsub li:last-child { margin-bottom: 0; }
+.qsub li::before {
+  counter-increment: qsub; content: counter(qsub);
+  position: absolute; left: 0; top: .12rem;
+  width: 1.45rem; height: 1.45rem; border-radius: 50%;
+  border: 1px solid var(--leaf-500); color: var(--leaf-700); background: var(--leaf-50);
+  font-family: var(--font-mono); font-size: .75rem; font-weight: 700;
+  display: grid; place-items: center;
+}
+.qsub b { display: block; color: var(--leaf-900); font-size: var(--text-base); margin-bottom: .2rem; }
