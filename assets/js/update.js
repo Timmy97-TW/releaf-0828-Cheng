@@ -74,7 +74,12 @@
         /* measure the body, not documentElement: the html element stretches to
            whatever height we last set on the frame, so reading it would just
            feed our own number back and the frame could never shrink. */
-        if (d && d.body) bp.style.height = Math.ceil(d.body.getBoundingClientRect().height) + 'px';
+        if (!d || !d.body) return;
+        var hgt = Math.ceil(d.body.getBoundingClientRect().height);
+        /* never collapse to something implausible: if the measurement comes back
+           tiny the content is not laid out yet, and shrinking the frame would
+           stop it ever laying out. */
+        if (hgt > 400) bp.style.height = hgt + 'px';
       } catch (e) {}
     };
     var watch = function () {
@@ -89,9 +94,18 @@
       [200, 800, 2000].forEach(function (ms) { setTimeout(fit, ms); });
     };
     bp.addEventListener('load', watch);
+    /* the frame is lazy, so its load event can fire before or after this script
+       runs, and on a cold load it may still be about:blank here. Watch for it
+       coming into view as well, and re-measure while it settles.             */
     if (bp.contentDocument && bp.contentDocument.readyState === 'complete') watch();
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) watch(); });
+      }, { rootMargin: '600px' }).observe(bp);
+    }
     window.addEventListener('resize', fit);
     window.addEventListener('orientationchange', fit);
+    window.addEventListener('load', function () { watch(); setTimeout(fit, 1200); });
   }
 
   /* ------------------------------------------------------------ lightbox */
